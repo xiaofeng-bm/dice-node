@@ -3,9 +3,17 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { FormatResponseInterceptor } from './format-response.interceptor';
 import { CustomExceptionFilter } from './custom-exception.filter';
+import * as fs from 'fs';
+
+const httpsOptions = {
+  key: fs.readFileSync('/ssl/cert.key'),
+  cert: fs.readFileSync('/ssl/cert.pem'),
+}
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,
+  });
 
   // 处理跨域
   app.enableCors();
