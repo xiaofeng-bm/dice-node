@@ -6,8 +6,8 @@ import { CustomExceptionFilter } from './custom-exception.filter';
 import * as fs from 'fs';
 
 const httpsOptions = {
-  key: fs.readFileSync('/ssl/cert.key'),
-  cert: fs.readFileSync('/ssl/cert.pem'),
+  key: fs.readFileSync('ssl/cert.key'),
+  cert: fs.readFileSync('ssl/cert.pem'),
 }
 
 async function bootstrap() {
