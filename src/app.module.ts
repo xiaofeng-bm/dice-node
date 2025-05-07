@@ -4,7 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { authPlugins } from 'mysql2';
+import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -14,6 +15,9 @@ import { authPlugins } from 'mysql2';
     }),
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
+        console.log('username', configService.get('mysql_server_username'));
+        console.log('password', configService.get('mysql_server_password'));
+        console.log('database', configService.get('mysql_server_database'));
         return {
           type: 'mysql',
           host: configService.get('mysql_server_host'),
@@ -23,7 +27,7 @@ import { authPlugins } from 'mysql2';
           database: configService.get('mysql_server_database'),
           synchronize: true,
           logging: true,
-          entities: [],
+          entities: [User],
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
@@ -32,7 +36,8 @@ import { authPlugins } from 'mysql2';
         }
       },
       inject: [ConfigService]
-    })
+    }),
+    UserModule
 
   ],
   controllers: [AppController],
