@@ -11,7 +11,7 @@ import { User } from './user/entities/user.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [path.join(__dirname, '.dev.env'), path.join(__dirname, '.prod.env')]
+      envFilePath: [path.join(__dirname, '.env')]
     }),
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
