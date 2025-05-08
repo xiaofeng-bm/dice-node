@@ -8,6 +8,8 @@ services:
       - mysql-container
     ports:
       - 443:443
+    volumes:
+      - /ssl:/ssl  
     networks:
       - common-network
   mysql-container:
