@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Room } from "src/room/entities/room.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
 
 @Entity({
   name: 'users'
@@ -38,4 +40,7 @@ export class User {
 
   @UpdateDateColumn()
   updateTime: Date;
+
+  @ManyToOne(() => Room)
+  room: Room;
 }

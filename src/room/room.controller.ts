@@ -1,0 +1,17 @@
+import { Module, Post, Body, Controller, Get } from '@nestjs/common';
+import { RoomService } from './room.service';
+import { CreateRoomDto } from './dto/create-room.dto';
+
+@Controller('room')
+export class RoomController {
+  constructor(private readonly roomService: RoomService) {}
+
+  @Get('get-room')
+  async getRoom(roomId: number) {
+    return await this.roomService.getRoom(roomId);
+  }
+  @Post('create-room')
+  async createRoom(@Body() createRoomDto: CreateRoomDto) {
+    return await this.roomService.createRoom(createRoomDto);
+  }
+}

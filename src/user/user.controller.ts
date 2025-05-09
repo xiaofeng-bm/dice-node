@@ -1,6 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 
+
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -9,5 +10,10 @@ export class UserController {
   login(@Body('code') code: string) {
     console.log('code', code)
     return this.userService.login(code);
+  }
+
+  @Post('update-user-info')
+  updateUserInfo(@Body() userInfo: any) {
+    // return this.userService.updateUserInfo(userInfo);
   }
 }

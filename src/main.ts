@@ -5,6 +5,7 @@ import { FormatResponseInterceptor } from './format-response.interceptor';
 import { CustomExceptionFilter } from './custom-exception.filter';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ValidationPipe } from '@nestjs/common';
 
 const httpsOptions = {
   key: fs.readFileSync('/ssl/cert.key'),
@@ -19,6 +20,7 @@ async function bootstrap() {
   // 处理跨域
   app.enableCors();
 
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new FormatResponseInterceptor());
   app.useGlobalFilters(new CustomExceptionFilter());
 

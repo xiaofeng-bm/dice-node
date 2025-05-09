@@ -6,6 +6,9 @@ import * as path from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
+import { Room } from './room/entities/room.entity';
+import { RoomModule } from './room/room.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -27,7 +30,7 @@ import { User } from './user/entities/user.entity';
           database: configService.get('mysql_server_database'),
           synchronize: true,
           logging: true,
-          entities: [User],
+          entities: [User, Room],
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
@@ -37,8 +40,9 @@ import { User } from './user/entities/user.entity';
       },
       inject: [ConfigService]
     }),
-    UserModule
-
+    UserModule,
+    RoomModule,
+    GameModule
   ],
   controllers: [AppController],
   providers: [AppService],
