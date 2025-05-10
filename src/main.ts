@@ -7,9 +7,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ValidationPipe } from '@nestjs/common';
 
+const env = process.env.NODE_ENV || 'development';
+
 const httpsOptions = {
-  key: fs.readFileSync('/ssl/cert.key'),
-  cert: fs.readFileSync('/ssl/cert.pem'),
+  key: env === 'production' ? fs.readFileSync('/ssl/cert.key') : '',
+  cert: env === 'production' ? fs.readFileSync('/ssl/cert.pem') : '',
 }
 
 async function bootstrap() {
