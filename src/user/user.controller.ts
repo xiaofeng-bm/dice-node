@@ -13,7 +13,7 @@ export class UserController {
   }
 
   @Post('update-user-info')
-  updateUserInfo(@Body() userInfo: any) {
-    // return this.userService.updateUserInfo(userInfo);
+  async updateUserInfo(@Body() userInfo: any) {
+    return await this.userService.updateUserInfo(userInfo);
   }
 }

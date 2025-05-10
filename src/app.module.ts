@@ -18,9 +18,6 @@ import { GameModule } from './game/game.module';
     }),
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
-        console.log('username', configService.get('mysql_server_username'));
-        console.log('password', configService.get('mysql_server_password'));
-        console.log('database', configService.get('mysql_server_database'));
         return {
           type: 'mysql',
           host: configService.get('mysql_server_host'),

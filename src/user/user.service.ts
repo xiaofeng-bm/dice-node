@@ -58,4 +58,24 @@ export class UserService {
       };
     }
   }
+
+  async updateUserInfo(userInfo: any) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: {
+          openid: userInfo.openid,
+        },
+      });
+      console.log('user', user);
+      if (!user) {
+        throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
+      }
+      user.headPic = userInfo.avatarUrl;
+      user.username = userInfo.nickName;
+      await this.userRepository.save(user);
+      return '跟新用户信息成功'
+    } catch (error) {
+      throw new HttpException('更新用户信息失败', HttpStatus.BAD_REQUEST);
+    }
+  }
 }

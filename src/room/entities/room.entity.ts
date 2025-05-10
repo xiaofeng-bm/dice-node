@@ -1,5 +1,5 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
   name: 'rooms',
@@ -32,6 +32,6 @@ export class Room {
   })
   gameType: number;
 
-  @OneToMany(() => User, (user) => user.room)
+  @ManyToMany(() => User, (user) => user.room)
   users: User[];
 }
