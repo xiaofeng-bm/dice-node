@@ -1,9 +1,13 @@
-import { Room } from "src/room/entities/room.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({
-  name: 'users'
+  name: 'users',
 })
 export class User {
   @PrimaryGeneratedColumn()
@@ -11,27 +15,27 @@ export class User {
 
   @Column({
     length: 50,
-    comment: '用户唯一id'
+    comment: '用户唯一id',
   })
   openid: string;
 
   @Column({
     length: 50,
     comment: '用户名',
-    nullable: true
+    nullable: true,
   })
   username: string;
 
   @Column({
     length: 200,
     comment: '头像',
-    nullable: true
+    nullable: true,
   })
   headPic: string;
 
   @Column({
     type: 'int',
-    nullable: true
+    nullable: true,
   })
   phoneNumber: number;
 
@@ -40,7 +44,4 @@ export class User {
 
   @UpdateDateColumn()
   updateTime: Date;
-
-  @ManyToOne(() => Room)
-  room: Room;
 }

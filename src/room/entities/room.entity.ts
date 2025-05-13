@@ -1,5 +1,5 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
   name: 'rooms',
@@ -32,6 +32,9 @@ export class Room {
   })
   gameType: number;
 
-  @ManyToMany(() => User, (user) => user.room)
-  users: User[];
+  @Column({
+    type: 'int',
+    comment: '房主id'
+  })
+  ownerId: number;
 }

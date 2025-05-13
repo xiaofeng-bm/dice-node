@@ -1,4 +1,6 @@
 import { IsInt, IsNotEmpty } from 'class-validator';
+import { User } from 'src/user/entities/user.entity';
+import { JoinColumn, OneToMany, OneToOne } from 'typeorm';
 
 export class CreateRoomDto {
   @IsNotEmpty({
@@ -29,4 +31,10 @@ export class CreateRoomDto {
     message: 'openid不能为空',
   })
   openid: string;
+
+  @OneToMany(() => User, (user) => user.id)
+  @JoinColumn({
+    name: 'ownerId'
+  })
+  owner: User;
 }

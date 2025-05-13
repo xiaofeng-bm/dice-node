@@ -9,6 +9,8 @@ import { User } from './user/entities/user.entity';
 import { Room } from './room/entities/room.entity';
 import { RoomModule } from './room/room.module';
 import { GameModule } from './game/game.module';
+import { GameRecord } from './room/entities/game-record.entity';
+
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { GameModule } from './game/game.module';
           database: configService.get('mysql_server_database'),
           synchronize: true,
           logging: true,
-          entities: [User, Room],
+          entities: [User, Room, GameRecord],
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
@@ -39,7 +41,7 @@ import { GameModule } from './game/game.module';
     }),
     UserModule,
     RoomModule,
-    GameModule
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],

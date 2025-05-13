@@ -32,17 +32,18 @@ export class RoomService {
       const user = await this.userRepository.findOneBy({
         openid: createRoomData.openid,
       });
-      console.log('users', user);
       if (!user) {
         return '用户不存在';
       }
 
-      const roomData = {
-        ...createRoomData,
-        users: [user],
-      };
-
-      const room = await this.roomRepository.save(roomData);
+      const newRoom = new Room();
+      newRoom.roomName = createRoomData.roomName;
+      newRoom.roomType = createRoomData.roomType;
+      newRoom.playerLimit = createRoomData.playerLimit;
+      newRoom.gameType = createRoomData.gameType;
+      // 默认创建房间的就是房主
+      newRoom.ownerId = user.id;
+      const room = await this.roomRepository.save(newRoom);
       return room;
     } catch (error) {
       return '添加失败';
