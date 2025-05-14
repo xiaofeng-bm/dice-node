@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Room } from './entities/room.entity';
+import { findOneByKey } from "src/utils"
 
 @Injectable()
 export class RoomService {
@@ -15,12 +16,7 @@ export class RoomService {
 
   async getRoom(roomId: number) {
     try {
-      const room = await this.roomRepository.findOne({
-        where: {
-          id: roomId,
-        },
-        relations: ['users']
-      });
+      const room = await findOneByKey(this.roomRepository, 'id', roomId);
       return room;
     } catch (error) {
       return '获取房间失败';
@@ -43,6 +39,8 @@ export class RoomService {
       newRoom.gameType = createRoomData.gameType;
       // 默认创建房间的就是房主
       newRoom.ownerId = user.id;
+      
+      newRoom.players = [];
       const room = await this.roomRepository.save(newRoom);
       return room;
     } catch (error) {

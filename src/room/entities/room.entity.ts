@@ -1,5 +1,13 @@
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({
   name: 'rooms',
@@ -34,7 +42,16 @@ export class Room {
 
   @Column({
     type: 'int',
-    comment: '房主id'
+    comment: '房主id',
   })
   ownerId: number;
+
+  @ManyToMany(() => User, {
+    nullable: true, // 可以为空
+    eager: false, // 不自动加载关联数据
+  })
+  @JoinTable({
+    name: 'room_players',
+  })
+  players: User[];
 }

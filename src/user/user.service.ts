@@ -1,9 +1,17 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { findOneByKey } from 'src/utils';
+import { UpdateUserInfoDto } from './dto/user-info.dto';
 
 @Injectable()
 export class UserService {
@@ -59,21 +67,34 @@ export class UserService {
     }
   }
 
-  async updateUserInfo(userInfo: any) {
+  async h5Login(id: number) {
     try {
-      const user = await this.userRepository.findOne({
-        where: {
-          openid: userInfo.openid,
+      let user = await findOneByKey(this.userRepository, 'id', id);
+      if (!user) {
+        throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
+      }
+      return {
+        code: 0,
+        result: {
+          ...user,
         },
-      });
-      console.log('user', user);
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  async updateUserInfo(userInfo: UpdateUserInfoDto) {
+    try {
+      const user = await findOneByKey(this.userRepository, 'id', userInfo.id);
+
       if (!user) {
         throw new HttpException('用户不存在', HttpStatus.NOT_FOUND);
       }
       user.headPic = userInfo.avatarUrl;
       user.username = userInfo.nickName;
       await this.userRepository.save(user);
-      return '跟新用户信息成功'
+      return '跟新用户信息成功';
     } catch (error) {
       throw new HttpException('更新用户信息失败', HttpStatus.BAD_REQUEST);
     }

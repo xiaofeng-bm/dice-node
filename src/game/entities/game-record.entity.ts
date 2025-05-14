@@ -19,14 +19,6 @@ export class GameRecord {
   @ManyToMany(() => User)
   @JoinTable({
     name: 'game_record_players',
-    joinColumn: {
-      name: 'game_record_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'player_id',
-      referencedColumnName: 'id',
-    },
   })
   players: User[];
 

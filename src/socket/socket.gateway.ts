@@ -1,14 +1,14 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Server, WebSocket } from 'ws'
-import { GameService } from './game.service';
+import { SocketService } from './socket.service';
 import { WsMessage, JoinRoomPayload } from './dto/room.entity'
 
 @Injectable()
-export class GameGateway implements OnModuleInit {
+export class SocketGateway implements OnModuleInit {
   private socket: Server;
 
 
-  constructor(private readonly gameService: GameService) {}
+  constructor(private readonly gameService: SocketService) {}
 
   onModuleInit() {
     this.socket = new Server({ port: 3010});

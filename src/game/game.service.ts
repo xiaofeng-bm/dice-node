@@ -1,4 +1,52 @@
 import { Injectable } from '@nestjs/common';
+import { AddPlayerDto, CreateGameDto } from './dto/create-game.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Room } from 'src/room/entities/room.entity';
+import { User } from 'src/user/entities/user.entity';
+import { GameRecord } from './entities/game-record.entity';
+import { EnterRoomDto } from './dto/enter-game.dto';
+import { findOneByKey } from 'src/utils';
 
 @Injectable()
-export class GameService {}
+export class GameService {
+  @InjectRepository(Room)
+  private roomRepository: Repository<Room>;
+
+  @InjectRepository(User)
+  private userRepository: Repository<User>;
+
+  @InjectRepository(GameRecord)
+  private gameRecordRepository: Repository<GameRecord>;
+
+  async enterRoom(data: EnterRoomDto) {
+    try {
+      const user = await findOneByKey(this.userRepository, 'id', data.userId)
+      if (!user) {
+        return '用户不存在';
+      }
+      // 使用findOne替代findOneByKey，显式加载players关联
+      const room = await this.roomRepository.findOne({
+        where: { id: data.roomId },
+        relations: ['players']
+      });
+      if (!room) {
+        return '房间不存在';
+      }
+
+      if (room.players?.length) {
+        const hasUser = room.players.find((player) => player.id === user.id);
+        if (!hasUser) {
+          room.players.push(user);
+        }
+      } else {
+        room.players = [user];
+      }
+
+      await this.roomRepository.save(room);
+      return room
+    } catch (error) {
+      return `系统异常: ${error}`;
+    }
+  }
+}

@@ -8,15 +8,20 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Room } from './room/entities/room.entity';
 import { RoomModule } from './room/room.module';
+import { GameRecord } from './game/entities/game-record.entity';
+import { SocketModule } from './socket/socket.module';
 import { GameModule } from './game/game.module';
-import { GameRecord } from './room/entities/game-record.entity';
-
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [path.join(__dirname, process.env.NODE_ENV === 'development' ? '.env' : '.prod.env')]
+      envFilePath: [
+        path.join(
+          __dirname,
+          process.env.NODE_ENV === 'development' ? '.env' : '.prod.env',
+        ),
+      ],
     }),
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
@@ -33,15 +38,16 @@ import { GameRecord } from './room/entities/game-record.entity';
           poolSize: 10,
           connectorPackage: 'mysql2',
           extra: {
-            authPlugins: 'sha256_password'
-          }
-        }
+            authPlugins: 'sha256_password',
+          },
+        };
       },
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     UserModule,
     RoomModule,
     GameModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
