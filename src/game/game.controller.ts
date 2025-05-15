@@ -1,7 +1,7 @@
 import { Controller, Post , Body} from '@nestjs/common';
 import { GameService } from './game.service';
 import { AddPlayerDto, CreateGameDto } from './dto/create-game.dto';
-import { EnterRoomDto } from './dto/enter-game.dto';
+import { EnterRoomDto, LeaveRoomDto } from './dto/enter-game.dto';
 
 @Controller('game')
 export class GameController {
@@ -10,5 +10,10 @@ export class GameController {
   @Post('enter-room')
   async enterRoom(@Body() enterRoomDto: EnterRoomDto) {
     return await this.gameService.enterRoom(enterRoomDto);
+  }
+
+  @Post('leave-room')
+  async leaveRoom(@Body() levelRoom: LeaveRoomDto) {
+    return await this.gameService.leaveRoom(levelRoom);
   }
 }

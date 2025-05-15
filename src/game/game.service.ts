@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { Room } from 'src/room/entities/room.entity';
 import { User } from 'src/user/entities/user.entity';
 import { GameRecord } from './entities/game-record.entity';
-import { EnterRoomDto } from './dto/enter-game.dto';
+import { EnterRoomDto, LeaveRoomDto } from './dto/enter-game.dto';
 import { findOneByKey } from 'src/utils';
 
 @Injectable()
@@ -21,14 +21,14 @@ export class GameService {
 
   async enterRoom(data: EnterRoomDto) {
     try {
-      const user = await findOneByKey(this.userRepository, 'id', data.userId)
+      const user = await findOneByKey(this.userRepository, 'id', data.userId);
       if (!user) {
         return '用户不存在';
       }
       // 使用findOne替代findOneByKey，显式加载players关联
       const room = await this.roomRepository.findOne({
         where: { id: data.roomId },
-        relations: ['players']
+        relations: ['players'],
       });
       if (!room) {
         return '房间不存在';
@@ -44,7 +44,44 @@ export class GameService {
       }
 
       await this.roomRepository.save(room);
-      return room
+      return room;
+    } catch (error) {
+      return `系统异常: ${error}`;
+    }
+  }
+
+  async leaveRoom(data: LeaveRoomDto) {
+    try {
+      const user = await findOneByKey(this.userRepository, 'id', data.userId);
+      if (!user) {
+        return '用户不存在';
+      }
+      // 使用findOne替代findOneByKey，显式加载players关联
+      const room = await this.roomRepository.findOne({
+        where: { id: data.roomId },
+        relations: ['players'],
+      });
+      if (!room) {
+        return '房间不存在';
+      }
+
+      if (room.players?.length) {
+        // 检查用户是否在房间中
+        const playerIndex = room.players.findIndex(
+          (player) => player.id === user.id,
+        );
+
+        // 如果用户在房间中，则将其移除
+        if (playerIndex !== -1) {
+          room.players.splice(playerIndex, 1);
+          await this.roomRepository.save(room);
+        } else {
+          return '用户不在该房间中';
+        }
+      }
+
+      await this.roomRepository.save(room);
+      return room;
     } catch (error) {
       return `系统异常: ${error}`;
     }

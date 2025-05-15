@@ -7,6 +7,7 @@ export interface WsMessage {
 export interface JoinRoomPayload {
   roomId: number;
   username: string;
+  userId: number;
 }
 
 export interface RoomInfo {
