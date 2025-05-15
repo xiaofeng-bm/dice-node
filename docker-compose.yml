@@ -9,7 +9,7 @@ services:
     ports:
       - 443:443
     volumes:
-      - /ssl:/ssl  
+      - /ssl:/ssl
     networks:
       - common-network
   mysql-container:
