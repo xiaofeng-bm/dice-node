@@ -15,3 +15,7 @@ export interface RoomInfo {
   roomId: number;
   players: any[];
 }
+
+export interface RoomInfo {
+  
+}

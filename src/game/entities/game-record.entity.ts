@@ -22,22 +22,11 @@ export class GameRecord {
   })
   players: User[];
 
-  @ManyToOne(() => User)
-  @JoinColumn({
-    name: 'ownerId',
-  })
-  owner: User;
-
   @Column({
     type: 'json',
     nullable: true,
     comment: '游戏记录',
   })
-  gameResult: object;
+  gameResult: string;
 
-  @Column({
-    nullable: true,
-    comment: '获胜者id',
-  })
-  winnerId: number;
 }

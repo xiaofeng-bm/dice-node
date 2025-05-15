@@ -18,7 +18,7 @@ export class SocketGateway implements OnModuleInit {
   // 心跳超时时间(毫秒)
   private readonly HEARTBEAT_TIMEOUT = 60000;
 
-  constructor(private readonly gameService: SocketService) {}
+  constructor(private readonly socketService: SocketService) {}
 
   onModuleInit() {
     this.socket = new Server({ port: 3010 });
@@ -98,6 +98,9 @@ export class SocketGateway implements OnModuleInit {
       case 'joinRoom':
         this.joinRoom(client, message.data);
         break;
+      case 'gameAgain':
+        this.gameAgain(client, message);
+        break;
       default:
         console.log('未知消息: ', message);
         // 不需要额外处理的消息，直接丢回给客户端
@@ -147,6 +150,18 @@ export class SocketGateway implements OnModuleInit {
     } catch (error) {
       console.error('加入房间失败:', error);
     }
+  }
+
+  async gameAgain(client: WebSocket, payload: any) {
+    const roomInfo = payload.data.roomInfo;
+    await this.socketService.saveGameRecord(roomInfo);
+    this.broadcastToRoom(roomInfo.id.toString(), {
+      event: 'message',
+      data: {
+        type: payload.event,
+        data: payload.data,
+      },
+    });
   }
 
   // 处理用户断开连接
