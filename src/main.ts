@@ -22,6 +22,8 @@ async function bootstrap() {
     httpsOptions,
   });
 
+  console.log('httpsOptions', httpsOptions)
+
   // 处理跨域
   app.enableCors();
 
