@@ -17,6 +17,12 @@ export class Room {
   id: number;
 
   @Column({
+    type: 'int',
+    comment: '房间id'
+  })
+  roomId: number;
+
+  @Column({
     length: 50,
     comment: '房间名称',
   })

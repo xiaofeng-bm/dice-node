@@ -60,10 +60,7 @@ export class UserService {
         };
       }
     } catch (error) {
-      return {
-        code: -1,
-        msg: '登录失败',
-      };
+      throw new BadRequestException('登录失败');
     }
   }
 

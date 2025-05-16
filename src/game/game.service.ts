@@ -27,7 +27,7 @@ export class GameService {
       }
       // 使用findOne替代findOneByKey，显式加载players关联
       const room = await this.roomRepository.findOne({
-        where: { id: data.roomId },
+        where: { roomId: data.roomId },
         relations: ['players'],
       });
       if (!room) {
