@@ -16,8 +16,8 @@ services:
     image: mysql
     volumes:
       - /Users/baimin/mysql-data:/var/lib/mysql
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3306:3306
     environment:
       MYSQL_DATABASE: dice-game
       MYSQL_ROOT_PASSWORD: 123456
