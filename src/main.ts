@@ -9,13 +9,13 @@ import { ValidationPipe } from '@nestjs/common';
 
 const env = process.env.NODE_ENV || 'development';
 
-const httpsOptions =
-  env === 'production'
-    ? {
-        key: fs.readFileSync('/ssl/cert.key'),
-        cert: fs.readFileSync('/ssl/cert.pem'),
-      }
-    : undefined;
+// const httpsOptions =
+//   env === 'production'
+//     ? {
+//         key: fs.readFileSync('/ssl/cert.key'),
+//         cert: fs.readFileSync('/ssl/cert.pem'),
+//       }
+//     : undefined;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
