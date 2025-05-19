@@ -18,6 +18,14 @@ const httpsOptions =
     : undefined;
 
 async function bootstrap() {
+  const httpsOptions =
+    env === 'production'
+      ? {
+          key: fs.readFileSync('/ssl/cert.key'),
+          cert: fs.readFileSync('/ssl/cert.pem'),
+        }
+      : undefined;
+
   const app = await NestFactory.create(AppModule, {
     httpsOptions: httpsOptions
   });

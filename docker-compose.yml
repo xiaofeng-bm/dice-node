@@ -25,7 +25,7 @@ services:
       MYSQL_DATABASE: dice-game
       MYSQL_ROOT_PASSWORD: azNmlg9ve5FZnVQt
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pazNmlg9ve5FZnVQt"]
       interval: 5s
       timeout: 5s
       retries: 5
