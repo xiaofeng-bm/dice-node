@@ -37,10 +37,10 @@ export class UserInfoDto {
 
 export class UpdateUserInfoDto{
   @IsNotEmpty({
-    message: 'openid不能为空',
+    message: 'id不能为空',
   })
   @IsNumber({}, {
-    message: 'openid必须为数字',
+    message: 'id必须为数字',
   })
   id: number;
 
