@@ -10,7 +10,7 @@ services:
     ports:
       - 443:443
     volumes:
-      - /Users/baimin/ssl:/ssl
+      - /ssl:/ssl
     environment:
       - NODE_ENV=production
     networks:

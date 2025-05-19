@@ -19,10 +19,7 @@ const httpsOptions =
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    httpsOptions: {
-      key: fs.readFileSync('/ssl/cert.key'),
-      cert: fs.readFileSync('/ssl/cert.pem'),
-    },
+    httpsOptions: httpsOptions
   });
 
   // 处理跨域
