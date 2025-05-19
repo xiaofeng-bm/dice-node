@@ -16,12 +16,7 @@ import { GameModule } from './game/game.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [
-        path.join(
-          __dirname,
-          process.env.NODE_ENV === 'development' ? '.env' : '.prod.env',
-        ),
-      ],
+      envFilePath: [path.join(__dirname, '.prod.env')],
     }),
     TypeOrmModule.forRootAsync({
       useFactory(configService: ConfigService) {
