@@ -5,15 +5,18 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     depends_on:
-      - mysql-container
+      mysql-container:
+        condition: service_healthy
     ports:
       - 443:443
     volumes:
-      - /ssl:/ssl
+      - /Users/baimin/ssl:/ssl
+    environment:
+      - NODE_ENV=production
     networks:
       - common-network
   mysql-container:
-    image: mysql
+    image: mysql:9.0
     volumes:
       - /Users/baimin/mysql-data:/var/lib/mysql
     # ports:
@@ -21,6 +24,12 @@ services:
     environment:
       MYSQL_DATABASE: dice-game
       MYSQL_ROOT_PASSWORD: 123456
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - common-network
 networks:
