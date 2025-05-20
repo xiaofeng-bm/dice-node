@@ -10,5 +10,6 @@ import { Room } from 'src/room/entities/room.entity';
   imports: [TypeOrmModule.forFeature([GameRecord, User, Room])],
   controllers: [GameController],
   providers: [GameService],
+  exports: [GameService],
 })
 export class GameModule {}

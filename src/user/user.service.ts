@@ -53,10 +53,7 @@ export class UserService {
         await this.userRepository.save(newUser);
         return {
           code: 0,
-          result: {
-            openid,
-            session_key,
-          },
+          result: newUser,
         };
       }
     } catch (error) {

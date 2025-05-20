@@ -55,6 +55,7 @@ export class Room {
   @ManyToMany(() => User, {
     nullable: true, // 可以为空
     eager: false, // 不自动加载关联数据
+    cascade: true, // 级联操作
   })
   @JoinTable({
     name: 'room_players',

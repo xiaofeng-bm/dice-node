@@ -32,4 +32,9 @@ export class SocketService {
       return `系统异常: ${error}`;
     }
   }
+
+  // 当房间人数为空时，删除房间
+  async deleteRoom (roomId: string) {
+
+  }
 }

@@ -2,6 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Server, WebSocket } from 'ws';
 import { SocketService } from './socket.service';
 import { WsMessage, JoinRoomPayload } from './dto/room.entity';
+import { GameService } from 'src/game/game.service';
+import { RoomService } from 'src/room/room.service';
 
 @Injectable()
 export class SocketGateway implements OnModuleInit {
@@ -18,7 +20,11 @@ export class SocketGateway implements OnModuleInit {
   // 心跳超时时间(毫秒)
   private readonly HEARTBEAT_TIMEOUT = 60000;
 
-  constructor(private readonly socketService: SocketService) {}
+  constructor(
+    private readonly socketService: SocketService,
+    private readonly gameService: GameService,
+    private readonly roomService: RoomService,
+  ) {}
 
   onModuleInit() {
     this.socket = new Server({ port: 3010 });
@@ -166,42 +172,53 @@ export class SocketGateway implements OnModuleInit {
 
   // 处理用户断开连接
   private handleDisconnect(client: WebSocket): void {
-    const clientInfo = this.clients.get(client);
-    if (!clientInfo) return;
+    try {
+      const clientInfo = this.clients.get(client);
+      if (!clientInfo) return;
 
-    // 从所有房间中移除此客户端
-    if (clientInfo.roomId) {
-      const roomClients = this.rooms.get(clientInfo.roomId);
-      if (roomClients) {
-        const index = roomClients.indexOf(client);
-        if (index !== -1) {
-          roomClients.splice(index, 1);
+      // 从所有房间中移除此客户端
+      if (clientInfo.roomId) {
+        const roomClients = this.rooms.get(clientInfo.roomId);
+        if (roomClients) {
+          const index = roomClients.indexOf(client);
+          if (index !== -1) {
+            roomClients.splice(index, 1);
 
-          // 通知房间内的其他用户
-          if (clientInfo.username) {
-            this.broadcastToRoom(clientInfo.roomId, {
-              event: 'message',
-              data: {
-                type: 'leaveRoom',
-                username: clientInfo.username,
-                userId: clientInfo.userId,
-                roomId: clientInfo.roomId,
-                timestamp: Date.now(),
-              },
+            this.gameService.leaveRoom({
+              userId: clientInfo.userId,
+              roomId: Number(clientInfo.roomId),
             });
-          }
 
-          // 如果房间为空，删除房间
-          if (roomClients.length === 0) {
-            this.rooms.delete(clientInfo.roomId);
+            // 通知房间内的其他用户
+            if (clientInfo.username) {
+              this.broadcastToRoom(clientInfo.roomId, {
+                event: 'message',
+                data: {
+                  type: 'leaveRoom',
+                  username: clientInfo.username,
+                  userId: clientInfo.userId,
+                  roomId: clientInfo.roomId,
+                  timestamp: Date.now(),
+                },
+              });
+            }
+
+            // 如果房间为空，删除房间
+            if (roomClients.length === 0) {
+              this.rooms.delete(clientInfo.roomId);
+              // 删除房间
+              this.roomService.deleteRoom(Number(clientInfo.roomId));
+            }
           }
         }
       }
-    }
 
-    // 从客户端映射中删除
-    this.clients.delete(client);
-    console.log('客户端断开连接，当前在线人数:', this.clients.size);
+      // 从客户端映射中删除
+      this.clients.delete(client);
+      console.log('客户端断开连接，当前在线人数:', this.clients.size);
+    } catch (error) {
+      throw new Error(`处理断开连接失败: ${error}`);
+    }
   }
 
   // 向房间内所有客户端广播消息

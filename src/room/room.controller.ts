@@ -14,4 +14,9 @@ export class RoomController {
   async createRoom(@Body() createRoomDto: CreateRoomDto) {
     return await this.roomService.createRoom(createRoomDto);
   }
+
+  @Post('delte-room')
+  async deleteRoom(@Body() roomId: number) {
+    return await this.roomService.deleteRoom(roomId);
+  }
 }

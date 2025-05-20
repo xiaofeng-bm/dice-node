@@ -54,4 +54,21 @@ export class RoomService {
       throw new BadRequestException(`创建房间失败: ${error}`);
     }
   }
+
+  async deleteRoom(roomId: number) {
+    try {
+      const room = await this.roomRepository.findOne({
+        where: { roomId },
+        relations: ['players'],
+      });
+      if (!room) {
+        return '房间不存在';
+      }
+      // 通过 remove 触发级联删除 room_players
+      await this.roomRepository.remove(room);
+      return '删除房间成功';
+    } catch (error) {
+      throw new BadRequestException(`删除房间失败: ${error}`);
+    }
+  }
 }
