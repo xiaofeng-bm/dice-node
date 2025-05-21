@@ -7,7 +7,7 @@ export class CustomExceptionFilter<T> implements ExceptionFilter {
     response.statusCode = exception.getStatus();
 
     const res = exception.getResponse() as { message: string[] };
-
+console.log('res', res);
     response
       .json({
         code: exception.getStatus(),

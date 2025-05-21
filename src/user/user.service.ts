@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   BadRequestException,
+  BadGatewayException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,16 +27,10 @@ export class UserService {
 
     try {
       let { data } = await axios.get(url);
-      console.log('data', data);
 
       const { openid, session_key } = data;
-
       // 查询是否存在用户
-      let user = await this.userRepository.findOne({
-        where: {
-          openid: openid,
-        },
-      });
+      let user = await findOneByKey(this.userRepository, 'openid', openid);
       if (user) {
         // 用户存在，直接返回
         return {
@@ -57,7 +52,7 @@ export class UserService {
         };
       }
     } catch (error) {
-      throw new BadRequestException('登录失败: ', error);
+      throw new BadGatewayException(error);
     }
   }
 
@@ -74,7 +69,7 @@ export class UserService {
         },
       };
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadGatewayException(error);
     }
   }
 
@@ -90,7 +85,7 @@ export class UserService {
       await this.userRepository.save(user);
       return '跟新用户信息成功';
     } catch (error) {
-      throw new HttpException('更新用户信息失败', HttpStatus.BAD_REQUEST);
+      throw new BadGatewayException(error);
     }
   }
 }

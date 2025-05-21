@@ -10,6 +10,5 @@ export const findOneByKey = async (
     throw new BadRequestException(`参数${key}不能为空`);
   }
   const entity = await repo.findOneBy({ [key]: value } as any);
-  if (!entity) throw new NotFoundException('Entity not found');
   return entity;
 };

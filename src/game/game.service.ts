@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { AddPlayerDto, CreateGameDto } from './dto/create-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,6 +11,7 @@ import { User } from 'src/user/entities/user.entity';
 import { GameRecord } from './entities/game-record.entity';
 import { EnterRoomDto, LeaveRoomDto } from './dto/enter-game.dto';
 import { findOneByKey } from 'src/utils';
+import { RemovePlayerDto } from './dto/remove-player.dto';
 
 @Injectable()
 export class GameService {
@@ -23,15 +28,24 @@ export class GameService {
     try {
       const user = await findOneByKey(this.userRepository, 'id', data.userId);
       if (!user) {
-        return '用户不存在';
+        throw new BadRequestException('用户不存在');
+      }
+
+      const roomInfo = await findOneByKey(
+        this.roomRepository,
+        'roomId',
+        data.roomId,
+      );
+      if (!roomInfo) {
+        throw new BadRequestException('房间不存在');
       }
       // 使用findOne替代findOneByKey，显式加载players关联
       const room = await this.roomRepository.findOne({
-        where: { roomId: data.roomId },
+        where: { id: roomInfo.id },
         relations: ['players'],
       });
       if (!room) {
-        return '房间不存在';
+        throw new BadRequestException('房间不存在');
       }
 
       if (room.players?.length) {
@@ -46,7 +60,7 @@ export class GameService {
       await this.roomRepository.save(room);
       return room;
     } catch (error) {
-      return `系统异常: ${error}`;
+      throw new BadGatewayException(error);
     }
   }
 
@@ -62,7 +76,7 @@ export class GameService {
         relations: ['players'],
       });
       if (!room) {
-        return '房间不存在';
+        throw new BadRequestException('房间不存在');
       }
 
       if (room.players?.length) {
@@ -83,7 +97,27 @@ export class GameService {
       await this.roomRepository.save(room);
       return room;
     } catch (error) {
-      return `系统异常: ${error}`;
+      throw new BadGatewayException(error);
+    }
+  }
+
+  async removePlayer(data: RemovePlayerDto) {
+    try {
+      const user = await findOneByKey(this.userRepository, 'id', data.userId);
+      if (!user) {
+        return '用户不存在';
+      }
+
+      // 使用findOne替代findOneByKey，显式加载players关联
+      const room = await this.roomRepository.findOne({
+        where: { roomId: data.roomId },
+        relations: ['players'],
+      });
+      if (!room) {
+        throw new BadRequestException('房间不存在');
+      }
+    } catch (error) {
+      throw new BadGatewayException(error);
     }
   }
 }

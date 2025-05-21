@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -14,12 +18,15 @@ export class RoomService {
   @InjectRepository(Room)
   private roomRepository: Repository<Room>;
 
-  async getRoom(roomId: number) {
+  async getRoom(roomId: string) {
     try {
-      const room = await findOneByKey(this.roomRepository, 'id', roomId);
+      const room = await this.roomRepository.findOne({
+        where: { roomId: Number(roomId) },
+        relations: ['players'],
+      });
       return room;
     } catch (error) {
-      return '获取房间失败';
+      throw new BadGatewayException(error);
     }
   }
 
@@ -51,7 +58,7 @@ export class RoomService {
       const room = await this.roomRepository.save(newRoom);
       return room;
     } catch (error) {
-      throw new BadRequestException(`创建房间失败: ${error}`);
+      throw new BadGatewayException(error);
     }
   }
 
@@ -62,13 +69,13 @@ export class RoomService {
         relations: ['players'],
       });
       if (!room) {
-        return '房间不存在';
+        throw new BadRequestException('房间不存在');
       }
       // 通过 remove 触发级联删除 room_players
       await this.roomRepository.remove(room);
       return '删除房间成功';
     } catch (error) {
-      throw new BadRequestException(`删除房间失败: ${error}`);
+      throw new BadGatewayException(error);
     }
   }
 }

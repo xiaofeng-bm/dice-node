@@ -77,6 +77,7 @@ export class SocketGateway implements OnModuleInit {
     setInterval(() => {
       this.socket.clients.forEach((ws: WebSocket) => {
         const clientInfo = this.clients.get(ws);
+        console.log('clientInfo', clientInfo)
         if (clientInfo && !clientInfo.isAlive) {
           // 如果客户端没有响应上一次的心跳检测，断开连接
           console.log('心跳检测失败，断开连接');
@@ -159,15 +160,19 @@ export class SocketGateway implements OnModuleInit {
   }
 
   async gameAgain(client: WebSocket, payload: any) {
-    const roomInfo = payload.data.roomInfo;
-    await this.socketService.saveGameRecord(roomInfo);
-    this.broadcastToRoom(roomInfo.id.toString(), {
-      event: 'message',
-      data: {
-        type: payload.event,
-        data: payload.data,
-      },
-    });
+    try {
+      const roomInfo = payload.data.roomInfo;
+      this.socketService.saveGameRecord(roomInfo);
+      this.broadcastToRoom(roomInfo.roomId.toString(), {
+        event: 'message',
+        data: {
+          type: payload.event,
+          data: payload.data,
+        },
+      });
+    } catch (error) {
+      console.log('游戏记录保存失败:', error);
+    }
   }
 
   // 处理用户断开连接

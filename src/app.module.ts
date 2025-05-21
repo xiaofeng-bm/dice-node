@@ -11,6 +11,7 @@ import { RoomModule } from './room/room.module';
 import { GameRecord } from './game/entities/game-record.entity';
 import { SocketModule } from './socket/socket.module';
 import { GameModule } from './game/game.module';
+import { WinstonModule } from './winston/winston.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { GameModule } from './game/game.module';
     RoomModule,
     GameModule,
     SocketModule,
+    WinstonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -6,6 +6,7 @@ import { CustomExceptionFilter } from './custom-exception.filter';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ValidationPipe } from '@nestjs/common';
+import { DiceLogger } from './logger.service';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -27,8 +28,10 @@ async function bootstrap() {
       : undefined;
 
   const app = await NestFactory.create(AppModule, {
-    httpsOptions: httpsOptions
+    httpsOptions: httpsOptions,
   });
+
+  app.useLogger(new DiceLogger());
 
   // 处理跨域
   app.enableCors();
