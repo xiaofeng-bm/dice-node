@@ -7,12 +7,14 @@ services:
     depends_on:
       mysql-container:
         condition: service_healthy
-    ports:
-      - 443:443
-    volumes:
-      - /ssl:/ssl
+    # 移除直接暴露443端口
+    # ports:
+    #   - 443:443
     environment:
       - NODE_ENV=production
+      - nest_server_port=3005
+    volumes:
+      - /ssl:/ssl
     networks:
       - common-network
   mysql-container:
@@ -30,6 +32,21 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    networks:
+      - common-network
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+      - 3005:3005
+      - 3010:3010
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /ssl:/ssl:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - nest-app
     networks:
       - common-network
 networks:
