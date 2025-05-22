@@ -10,31 +10,16 @@ import { DiceLogger } from './logger.service';
 
 const env = process.env.NODE_ENV || 'development';
 
-const httpsOptions =
-  env === 'production'
-    ? {
-        key: fs.readFileSync('/ssl/cert.key'),
-        cert: fs.readFileSync('/ssl/cert.pem'),
-      }
-    : undefined;
 
 async function bootstrap() {
-  const httpsOptions =
-    env === 'production'
-      ? {
-          key: fs.readFileSync('/ssl/cert.key'),
-          cert: fs.readFileSync('/ssl/cert.pem'),
-        }
-      : undefined;
 
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions: httpsOptions,
-  });
+
+  const app = await NestFactory.create(AppModule);
 
   app.useLogger(new DiceLogger());
 
   // 处理跨域
-  app.enableCors();
+  // app.enableCors();
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new FormatResponseInterceptor());
