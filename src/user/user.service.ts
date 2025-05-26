@@ -29,6 +29,7 @@ export class UserService {
       let { data } = await axios.get(url);
 
       const { openid, session_key } = data;
+      console.log('微信登录返回数据', data);
       // 查询是否存在用户
       let user = await findOneByKey(this.userRepository, 'openid', openid);
       if (user) {
@@ -48,6 +49,7 @@ export class UserService {
         await this.userRepository.save(newUser);
         return {
           code: 0,
+          errMsg: '用户信息不完善，请完善用户信息',
           result: newUser,
         };
       }
