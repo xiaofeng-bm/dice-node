@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      mysql-container:
+        condition: service_healthy
+    # 移除直接暴露443端口
+    # ports:
+    #   - 443:443
+    environment:
+      - NODE_ENV=production
+      - nest_server_port=3005
+    volumes:
+      - /ssl:/ssl
+    restart: unless-stopped
+    networks:
+      - common-network
+  mysql-container:
+    image: mysql:9.0
+    volumes:
+      - /Users/baimin/mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: dice-game
+      MYSQL_ROOT_PASSWORD: azNmlg9ve5FZnVQt
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pazNmlg9ve5FZnVQt"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - common-network
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+      - 3005:3005
+      - 3010:3010
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /ssl:/ssl:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - nest-app
+    restart: unless-stopped
+    networks:
+      - common-network
+networks:
+  common-network:
+    driver: bridge
